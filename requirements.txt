@@ -1,0 +1,6 @@
+numpy
+pycryptodome
+pillow
+matplotlib
+prettytable
+flask

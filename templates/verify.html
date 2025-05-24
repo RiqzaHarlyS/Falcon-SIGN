@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Tanda Tangan - Falcon Digital Signature</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 1rem;
+        }
+        .file-input-container {
+            margin-bottom: 1.5rem;
+        }
+        .spinning {
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Verifikasi Tanda Tangan Digital</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Beranda</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Verifikasi</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Verifikasi File dengan Tanda Tangan</h3>
+                        <p class="card-text">Unggah file asli dan file tanda tangan untuk memeriksa keaslian.</p>
+                        
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <form action="/verify" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="keyId" class="form-label">ID Kunci</label>
+                                <input type="text" class="form-control" id="keyId" name="key_id" required>
+                                <div class="form-text">Masukkan ID kunci yang digunakan untuk penandatanganan</div>
+                            </div>
+                            
+                            <div class="file-input-container">
+                                <label for="file" class="form-label">File Asli</label>
+                                <input class="form-control" type="file" id="file" name="file" required>
+                                <div class="form-text">Pilih file asli yang ingin diverifikasi</div>
+                            </div>
+                            
+                            <div class="file-input-container">
+                                <label for="signature" class="form-label">File Tanda Tangan (.sig)</label>
+                                <input class="form-control" type="file" id="signature" name="signature" required>
+                                <div class="form-text">Pilih file tanda tangan untuk file di atas</div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="verifyBtn">Verifikasi Tanda Tangan</button>
+                                <a href="/" class="btn btn-outline-secondary">Kembali ke Beranda</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Tentang Verifikasi Tanda Tangan</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Proses verifikasi memeriksa apakah:</p>
+                        <ol>
+                            <li>File belum dimodifikasi sejak penandatanganan</li>
+                            <li>Tanda tangan dibuat dengan kunci pribadi yang sesuai dengan kunci publik yang digunakan untuk verifikasi</li>
+                        </ol>
+                        <p>Jika salah satu kondisi di atas tidak terpenuhi, verifikasi akan gagal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-5 text-center text-muted">
+            <p>Falcon Digital Signature App &copy; 2025</p>
+            <p>Falcon adalah algoritma tanda tangan digital post-quantum yang dipilih oleh NIST.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memverifikasi...';
+        });
+    </script>
+</body>
+</html>

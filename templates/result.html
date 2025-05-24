@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Penandatanganan - Falcon Digital Signature</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 1rem;
+        }
+        .signature-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            font-family: monospace;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .file-preview {
+            max-width: 100%;
+            max-height: 300px;
+            margin: 1rem auto;
+            display: block;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .document-icon {
+            font-size: 5rem;
+            color: #6c757d;
+            text-align: center;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Hasil Penandatanganan</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Beranda</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Hasil Penandatanganan</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Informasi File</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill"></i> File berhasil ditandatangani!
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Nama File</h6>
+                            <p>{{ result.filename }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Ukuran File</h6>
+                            <p>{{ result.file_size }} bytes</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Hash File (SHA-256)</h6>
+                            <div class="signature-box">{{ result.file_hash }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Ukuran Tanda Tangan</h6>
+                            <p>{{ result.signature_size }} bytes</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Download</h6>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('download_file', filename=result.filename) }}" class="btn btn-primary">
+                                    <i class="bi bi-download"></i> Download File
+                                </a>
+                                <a href="{{ url_for('download_signature', filename=result.signature_filename) }}" class="btn btn-secondary">
+                                    <i class="bi bi-download"></i> Download Tanda Tangan
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Verifikasi</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Untuk memverifikasi file ini nanti, Anda akan memerlukan:</p>
+                        <ul>
+                            <li>File asli</li>
+                            <li>File tanda tangan yang dihasilkan (.sig)</li>
+                            <li>Kunci publik yang sama (simpan ID kunci)</li>
+                        </ul>
+                        <a href="/verify" class="btn btn-info">Ke Halaman Verifikasi</a>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <a href="/" class="btn btn-outline-primary">Kembali ke Beranda</a>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Preview File</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        {% if result.preview_data %}
+                            <img src="data:image/png;base64,{{ result.preview_data }}" class="file-preview" alt="Preview">
+                        {% elif result.file_type == 'pdf' %}
+                            <div class="document-icon">
+                                <i class="bi bi-file-earmark-pdf"></i>📄
+                            </div>
+                            <p class="text-center">PDF Document</p>
+                        {% elif result.file_type in ['doc', 'docx'] %}
+                            <div class="document-icon">
+                                <i class="bi bi-file-earmark-word"></i>📝
+                            </div>
+                            <p class="text-center">Word Document</p>
+                        {% else %}
+                            <div class="document-icon">
+                                <i class="bi bi-file-earmark"></i>📄
+                            </div>
+                            <p class="text-center">{{ result.file_type|upper }} File</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-5 text-center text-muted">
+            <p>Falcon Digital Signature App &copy; 2025</p>
+            <p>Falcon adalah algoritma tanda tangan digital post-quantum yang dipilih oleh NIST.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
